@@ -312,8 +312,8 @@ exports.decorateTab = (Tab, { React }) => {
     return class extends Tab {
         render() {
             const icon = getIcon(this.props.text);
-            this.props.text = React.createElement('span', { className: `tab_process process_${icon}` }, this.props.text);
-            return React.createElement(Tab, Object.assign({}, this.props, {}));
+            const text = React.createElement('span', { className: `tab_process process_${icon}` }, this.props.text);
+            return React.createElement(Tab, Object.assign({}, this.props, {text}));
         }
     }
 };
@@ -321,11 +321,12 @@ exports.decorateTab = (Tab, { React }) => {
 exports.decorateTabs = (Tabs, { React }) => {
     return class extends Tabs {
         render() {
-            if (this.props.tabs.length === 1 && typeof this.props.tabs[0].title === 'string') {
-                const icon = getIcon(this.props.tabs[0].title);
-                this.props.tabs[0].title = React.createElement('span', { className: `tab_process process_${icon}` }, this.props.tabs[0].title);
+            const tabsProp = this.props.tabs;
+            if (tabsProp.length === 1 && typeof tabsProp[0].title === 'string') {
+                const icon = getIcon(tabsProp[0].title);
+                tabsProp[0].title = React.createElement('span', { className: `tab_process process_${icon}` }, tabsProp[0].title);
             }
-            return React.createElement(Tabs, Object.assign({}, this.props, {}));
+            return React.createElement(Tabs, Object.assign({}, this.props, {tabs: tabsProp}));
         }
     }
 };
