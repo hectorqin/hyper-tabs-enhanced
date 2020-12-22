@@ -2,6 +2,8 @@
 const { remote } = require('electron');
 const color = require('color');
 
+let decorateTitle = null;
+
 // Config
 exports.decorateConfig = (config) => {
     const backColor = color(config.backgroundColor);
@@ -330,3 +332,23 @@ exports.decorateTabs = (Tabs, { React }) => {
         }
     }
 };
+
+exports.middleware = (store) => (next) => (action) => {
+    switch (action.type) {
+        case 'SESSION_SET_XTERM_TITLE':
+            console.log('SESSION_SET_XTERM_TITLE ', decorateTitle, typeof decorateTitle);
+            if (typeof decorateTitle === 'function') {
+                action.title = decorateTitle(action.title)
+            }
+            break;
+        case 'CONFIG_LOAD':
+        case 'CONFIG_RELOAD':
+            console.log(action.config.hyperTabs);
+            if (action.config.hyperTabs) {
+                decorateTitle = action.config.hyperTabs.decorateTitle;
+            }
+            break;
+    }
+
+    next(action);
+}
